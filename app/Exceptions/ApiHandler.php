@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 
 trait ApiHandler
 {
@@ -14,13 +16,36 @@ trait ApiHandler
             return $this->validationException($e);
         }
 
+        if ($e instanceof AuthenticationException) {
+            return $this->authenticationException($e);
+        }
+
+        if ($e instanceof TokenBlacklistedException) {
+            return $this->authenticationException($e);
+        }
+
         return $this->genericException($e);
     }
 
     // Retorna uma reposta para erro de validação
     protected function validationException(ValidationException $e): JsonResponse
     {
-        return resposta_padrao("Erro de validação dos dados enviados", "validation_error", 400, $e->errors());
+        return resposta_padrao(
+            "Erro de validação dos dados enviados",
+            "validation_error",
+            400,
+            $e->errors()
+        );
+    }
+
+    // Retorna uma resposta para o erro de autenticação
+    protected function authenticationException(AuthenticationException|TokenBlacklistedException $e): JsonResponse
+    {
+        return resposta_padrao(
+            $e->getMessage(),
+            "token_not_valid",
+            401
+        );
     }
 
     // Retorna uma resposta para erro genérico

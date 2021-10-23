@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
     // Faz tratamento de exceções no Laravel
     public function render($request, Throwable $e)
     {
-        if ($request->is('api/*')) {
+        if ($request->is('api/*') || $request->is('auth/*')) {
             return $this->getJsonException($e);
         }
 
