@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Diaria\CadastroController as DiariaCadastroController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\Servico\ObtemServicos;
@@ -11,9 +12,12 @@ use App\Http\Controllers\Usuario\AutenticacaoController;
 
 Route::get('/', IndexController::class);
 
-Route::get('/me', [AutenticacaoController::class, 'me'])
-    ->middleware('auth:api')
-    ->name('usuarios.show');
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('/me', [AutenticacaoController::class, 'me'])->name('usuarios.show');
+
+    Route::post('/diarias', [DiariaCadastroController::class, 'store'])->name('diarias.store');
+});
+
 
 Route::get('/diaristas/localidades', ObtemDiaristaPorCep::class)->name('diaristas.buca_por_cep');
 Route::get('/diaristas/disponibilidade', VerificaDisponibilidade::class)->name('enderecos.disponibilidade');
