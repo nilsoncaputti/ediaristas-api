@@ -1,25 +1,27 @@
 <?php
 
-use App\Http\Controllers\Diaria\CadastroController as DiariaCadastroController;
-use App\Http\Controllers\Diaria\PagaDiaria;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\Diaria\PagaDiaria;
 use App\Http\Controllers\Servico\ObtemServicos;
 use App\Http\Controllers\Usuario\CadastroController;
 use App\Http\Controllers\Endereco\BuscaCepApiExterna;
 use App\Http\Controllers\Diarista\ObtemDiaristaPorCep;
-use App\Http\Controllers\Diarista\VerificaDisponibilidade;
 use App\Http\Controllers\Usuario\AutenticacaoController;
+use App\Http\Controllers\Diarista\VerificaDisponibilidade;
+use App\Http\Controllers\Diaria\CadastroController as DiariaCadastroController;
 
 Route::get('/', IndexController::class);
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/me', [AutenticacaoController::class, 'me'])->name('usuarios.show');
 
+    Route::get('/diarias', [DiariaCadastroController::class, 'index'])->name('diarias.index');
     Route::post('/diarias', [DiariaCadastroController::class, 'store'])->name('diarias.store');
+    Route::get('/diarias/{diaria}', [DiariaCadastroController::class, 'show'])->name('diarias.show');
+
     Route::post('/diarias/{diaria}/pagamentos', PagaDiaria::class)->name('diarias.pagar');
 });
-
 
 Route::get('/diaristas/localidades', ObtemDiaristaPorCep::class)->name('diaristas.buca_por_cep');
 Route::get('/diaristas/disponibilidade', VerificaDisponibilidade::class)->name('enderecos.disponibilidade');
