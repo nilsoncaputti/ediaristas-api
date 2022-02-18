@@ -77,4 +77,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return User::diaristasAtendeCidade($codigoIbge)->count();
     }
+
+    // Retorna as cidades atendidas pelo(a) diarista
+    public function cidadesAtendidasDiarista(): array
+    {
+        return $this->cidadesAtendidas()->pluck('codigo_ibge')->toArray();
+    }
 }

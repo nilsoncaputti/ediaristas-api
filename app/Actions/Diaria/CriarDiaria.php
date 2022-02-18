@@ -6,12 +6,12 @@ use App\Models\Diaria;
 use App\Models\Servico;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use App\Services\ConsultaCidade\Provedores\Ibge;
+use App\Services\ConsultaCidade\ConsultaCidadeInterface;
 
 class CriarDiaria
 {
     function __construct(
-        private Ibge $consultaCidade
+        private ConsultaCidadeInterface $consultaCidade
     ) {
     }
 

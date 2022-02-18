@@ -15,6 +15,8 @@ trait ApiHandler
     // Trata as exceções da nossa API
     protected function getJsonException(\Throwable $e): JsonResponse
     {
+        //dd($e);
+
         if ($e instanceof ModelNotFoundException) {
             return $this->notFoundException();
         }
