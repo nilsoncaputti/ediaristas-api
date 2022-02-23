@@ -2,6 +2,8 @@
 
 namespace App\Http\Hateoas;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class Diaria extends HateoasBase implements HateoasInterface
@@ -12,6 +14,7 @@ class Diaria extends HateoasBase implements HateoasInterface
         $this->adicionaLink('GET', 'self', 'diarias.show', ['diaria' => $diaria->id]);
 
         $this->linkPagar($diaria);
+        $this->linkConfirmar($diaria);
 
         return $this->links;
     }
@@ -26,6 +29,20 @@ class Diaria extends HateoasBase implements HateoasInterface
                 'diarias.pagar',
                 ['diaria' => $diaria->id]
             );
+        }
+    }
+
+    // Confirmar a presença do(a) diarista
+    private function linkConfirmar(Model $diaria): void
+    {
+        $depoisDataAtendimento = Carbon::now() > Carbon::parse($diaria->data_atendimento);
+        $diariaConfirmada = $diaria->status == 3;
+        $usuarioTipoCliente = Auth::user()->tipo_usuario == 1;
+
+        if ($depoisDataAtendimento && $diariaConfirmada && $usuarioTipoCliente) {
+            $this->adicionaLink('PATCH', 'confirmar_diarista', 'diarias.confirmar', [
+                'diaria' => $diaria->id
+            ]);
         }
     }
 }
